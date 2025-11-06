@@ -1,0 +1,87 @@
+```typescriptreact file="app/media/page.tsx"
+[v0-no-op-code-block-prefix]import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowRight } from 'lucide-react'
+import Link from "next/link"
+import Image from "next/image"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Media - AI Talent Insights",
+  description:
+    "Explore articles, research, and perspectives on AI talent acquisition, hiring strategies, and industry trends from Connect Tech+Talent.",
+}
+
+const blogPosts = [
+  {
+    title: "Mastering AI-Driven Hiring in the Modern Era",
+    excerpt:
+      "In the dynamic world of recruitment, staying ahead means embracing innovation. Artificial Intelligence (AI) has emerged as a transformative force, reshaping how organizations approach hiring...",
+    link: "/media/mastering-ai-driven-hiring",
+    image: "/media/mastering-ai-driven-hiring.jpeg",
+  },
+  {
+    title: "Tech Hiring in the Era of New Work Trends",
+    excerpt:
+      "In today’s dynamic tech landscape, understanding the shifts and nuances that define the industry is paramount. The world of work has seen a significant metamorphosis...",
+    link: "/media/tech-hiring-new-work-trends",
+    image: "/media/tech-hiring-new-work-trends.jpeg",
+  },
+  {
+    title: "Ethical AI in Recruitment: A CIO's Guide",
+    excerpt:
+      "Navigating the ethical landscape of AI in hiring is crucial for enterprise leaders. This guide covers key principles for ensuring fairness, transparency, and compliance in your AI recruitment processes.",
+    link: "#",
+    image: "/placeholder.svg?width=400&height=225",
+  },
+]
+
+export default function MediaPage() {
+  return (
+    <>
+      {/* Hero Section */}
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-3xl font-semibold text-gray-900 mb-4">Media & Insights</h1>
+            <p className="text-lg text-gray-600">
+              Explore our latest articles, research, and perspectives on the world of AI talent and technology hiring.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Posts Grid */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {blogPosts.map((post) => (
+              <Card key={post.title} className="border border-gray-200 flex flex-col overflow-hidden">
+                <div className="relative w-full aspect-video">
+                  <Image
+                    src={post.image || "/placeholder.svg"}
+                    alt={post.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </div>
+                <CardHeader>
+                  <CardTitle className="text-xl font-medium text-gray-900">{post.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow flex flex-col">
+                  <p className="text-sm text-gray-600 mb-6 flex-grow">{post.excerpt}</p>
+                  <Button variant="outline" className="w-fit mt-auto bg-transparent" asChild>
+                    <Link href={post.link}>
+                      Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}

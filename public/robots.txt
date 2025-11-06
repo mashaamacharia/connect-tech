@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Disallow private pages
+Disallow: /privacy
+Disallow: /terms
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://connecttechtalent.com/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1
