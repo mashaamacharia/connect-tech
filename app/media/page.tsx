@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
 import MediaPageClient from "@/components/mediaPage.tsx"
+import { fetchAllBlogPosts } from "@/lib/wordpress/api"
+import type { BlogPost } from "@/lib/wordpress/types"
 
 export const metadata: Metadata = {
   title: "Media & Insights | Expert Articles on AI Talent, Tech Hiring & Workforce Trends - Connect Tech+Talent",
@@ -49,10 +51,21 @@ export const metadata: Metadata = {
   },
 }
 
-export default function MediaPage() {
+export default async function MediaPage() {
+  // Fetch blog posts from WordPress on the server
+  let initialPosts: BlogPost[] = []
+  
+  try {
+    initialPosts = await fetchAllBlogPosts()
+  } catch (error) {
+    console.error("Error fetching blog posts:", error)
+    // If WordPress is unavailable, initialPosts will be empty array
+    // The component will handle this gracefully
+  }
+
   return (
     <Suspense fallback={<div className="container mx-auto px-4 py-8">Loading...</div>}>
-      <MediaPageClient />
+      <MediaPageClient initialPosts={initialPosts} />
     </Suspense>
   )
 }

@@ -7,9 +7,14 @@ import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { fetchAllBlogPosts } from "@/lib/wordpress/api"
+import type { BlogPost } from "@/lib/wordpress/types"
 
-const blogPosts = [
+// Fallback blog posts (used if WordPress is unavailable)
+const fallbackBlogPosts: BlogPost[] = [
   {
+    id: "1",
+    slug: "staffing-agency-hiring-simpler-faster",
     title: "How Does a Staffing Agency Make Hiring Simpler and Faster?",
     excerpt:
       "Whether you are running a small business or a large enterprise, you would agree that building a workforce is not an overnight process. Reviewing applications for different job postings, pre-screening candidates, interviewing the shortlisted ones, and then providing an offer letter, there are several steps involved in hiring the right people...",
@@ -19,6 +24,8 @@ const blogPosts = [
     date: "September 9, 2025",
   },
   {
+    id: "2",
+    slug: "employee-referrals-hiring-strategy",
     title: "Impact of Employee Referrals on Your Hiring Strategy",
     excerpt:
       "Active recruitment is a crucial activity in almost every organization that sets the pace of business operations. But to maintain the recruitment cycle, your hiring team works hard to post job ads, pre-screen qualified candidates, and conduct interviews before the final selection...",
@@ -28,6 +35,8 @@ const blogPosts = [
     date: "September 16, 2025",
   },
   {
+    id: "3",
+    slug: "connecttel-becomes-connect-tech-talent",
     title: "ConnectTel Becomes Connect Tech+Talent",
     excerpt:
       "ConnectTel is being rebranded to Connect Tech & Talent because this closely reflects the services that we provide to clients in the tech hiring space. Learn about our evolution from technology projects to building winning teams...",
@@ -262,6 +271,8 @@ const blogPosts = [
     date: "July 22, 2025",
   },
   {
+    id: "27",
+    slug: "evolving-hr-technologies",
     title: "Evolving HR Technologies & Their Impact On Hiring",
     excerpt:
       "In the dynamic world of recruitment, the tools and strategies that drive the hiring process are constantly evolving. As businesses strive to find the best talent, they're turning to cutting-edge HR technologies...",
@@ -270,17 +281,50 @@ const blogPosts = [
     author: "Kannan Kaliyur",
     date: "July 29, 2025",
   },
-]
+].map((post, index) => ({
+  ...post,
+  id: post.id || `fallback-${index + 1}`,
+  slug: post.slug || post.link.replace("/media/", ""),
+}))
 
 const POSTS_PER_PAGE = 6
 
-export default function MediaPageClient() {
+interface MediaPageClientProps {
+  initialPosts?: BlogPost[]
+}
+
+export default function MediaPageClient({ initialPosts = [] }: MediaPageClientProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
 
   const pageFromUrl = searchParams.get("page")
   const [currentPage, setCurrentPage] = useState(pageFromUrl ? Number.parseInt(pageFromUrl) : 1)
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(initialPosts)
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Fetch posts from WordPress if initialPosts is empty
+  useEffect(() => {
+    const loadPosts = async () => {
+      if (initialPosts.length === 0) {
+        setIsLoading(true)
+        try {
+          const posts = await fetchAllBlogPosts()
+          setBlogPosts(posts.length > 0 ? posts : fallbackBlogPosts)
+        } catch (error) {
+          console.error("Error loading blog posts:", error)
+          // Use fallback posts if WordPress is unavailable
+          setBlogPosts(fallbackBlogPosts)
+        } finally {
+          setIsLoading(false)
+        }
+      } else {
+        setBlogPosts(initialPosts)
+      }
+    }
+
+    loadPosts()
+  }, [initialPosts])
 
   useEffect(() => {
     const pageFromUrl = searchParams.get("page")
@@ -288,7 +332,7 @@ export default function MediaPageClient() {
     if (pageNumber !== currentPage) {
       setCurrentPage(pageNumber)
     }
-  }, [searchParams])
+  }, [searchParams, currentPage])
 
   const totalPages = Math.ceil(blogPosts.length / POSTS_PER_PAGE)
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE
@@ -321,45 +365,56 @@ export default function MediaPageClient() {
       {/* Blog Posts Grid */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {currentPosts.map((post) => (
-              <Link key={post.title} href={`${post.link}?page=${currentPage}`} className="block">
-                <Card className="border border-gray-200 flex flex-col overflow-hidden h-full cursor-pointer hover:shadow-lg transition-shadow duration-200">
-                  <div className="relative w-full aspect-video bg-gray-100">
-                    <Image
-                      src={post.image || "/placeholder.svg"}
-                      alt={post.title}
-                      fill
-                      className="object-contain"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-gray-900">
-                      <h3>{post.title}</h3>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow flex flex-col">
-                    <div className="flex items-center space-x-4 metadata-text text-gray-500 mb-4">
-                      <div className="flex items-center space-x-1">
-                        <User className="h-3 w-3" />
-                        <span>{post.author}</span>
-                      </div>
-                      <span>•</span>
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-3 w-3" />
-                        <span>{post.date}</span>
-                      </div>
+          {isLoading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Loading blog posts...</p>
+            </div>
+          ) : blogPosts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No blog posts available at the moment.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {currentPosts.map((post) => (
+                <Link key={post.id || post.slug || post.title} href={`${post.link}?page=${currentPage}`} className="block">
+                  <Card className="border border-gray-200 flex flex-col overflow-hidden h-full cursor-pointer hover:shadow-lg transition-shadow duration-200">
+                    <div className="relative w-full aspect-video bg-gray-100">
+                      <Image
+                        src={post.image || "/placeholder.svg"}
+                        alt={post.title}
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        unoptimized={post.image?.startsWith("http")}
+                      />
                     </div>
-                    <p className="text-gray-600 mb-6 flex-grow">{post.excerpt}</p>
-                    <Button variant="outline" className="w-fit mt-auto bg-transparent pointer-events-none">
-                      Learn More <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+                    <CardHeader>
+                      <CardTitle className="text-gray-900">
+                        <h3>{post.title}</h3>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow flex flex-col">
+                      <div className="flex items-center space-x-4 metadata-text text-gray-500 mb-4">
+                        <div className="flex items-center space-x-1">
+                          <User className="h-3 w-3" />
+                          <span>{post.author}</span>
+                        </div>
+                        <span>•</span>
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>{post.date}</span>
+                        </div>
+                      </div>
+                      <p className="text-gray-600 mb-6 flex-grow">{post.excerpt}</p>
+                      <Button variant="outline" className="w-fit mt-auto bg-transparent pointer-events-none">
+                        Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
 
           {totalPages > 1 && (
             <div className="flex justify-center items-center mt-12 space-x-2">
