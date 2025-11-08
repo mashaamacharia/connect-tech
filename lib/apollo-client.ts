@@ -35,7 +35,12 @@ function createApolloClient() {
           fields: {
             posts: {
               merge(existing = [], incoming) {
+                // Always return incoming data (no caching)
                 return incoming;
+              },
+              // Disable caching for posts
+              read(existing) {
+                return undefined; // Force refetch
               },
             },
           },
@@ -45,10 +50,12 @@ function createApolloClient() {
     ssrMode: typeof window === "undefined",
     defaultOptions: {
       watchQuery: {
-        fetchPolicy: "cache-and-network",
+        fetchPolicy: "no-cache", // Changed from cache-and-network
+        errorPolicy: "all",
       },
       query: {
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache", // Changed from network-only
+        errorPolicy: "all",
       },
     },
   });
@@ -59,16 +66,26 @@ let apolloClient: ReturnType<typeof createApolloClient> | null = null;
 
 export function getApolloClient() {
   if (typeof window === "undefined") {
-    // Server-side: create new client for each request
+    // Server-side: create new client for each request (no caching)
     return createApolloClient();
   }
   
-  // Client-side: reuse client
-  if (!apolloClient) {
+  // Client-side: clear cache and create new client if exists, or reuse
+  if (apolloClient) {
+    // Clear cache before reusing
+    apolloClient.cache.reset();
+  } else {
     apolloClient = createApolloClient();
   }
   
   return apolloClient;
+}
+
+// Function to clear Apollo Client cache
+export function clearApolloCache() {
+  if (apolloClient) {
+    apolloClient.cache.reset();
+  }
 }
 
 // Export default for backward compatibility

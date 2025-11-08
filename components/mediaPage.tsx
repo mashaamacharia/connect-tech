@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Calendar, User, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowRight, Calendar, User, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
@@ -303,28 +303,61 @@ export default function MediaPageClient({ initialPosts = [] }: MediaPageClientPr
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>(initialPosts)
   const [isLoading, setIsLoading] = useState(false)
 
-  // Fetch posts from WordPress if initialPosts is empty
+  // Always fetch fresh data on component mount
   useEffect(() => {
     const loadPosts = async () => {
-      if (initialPosts.length === 0) {
-        setIsLoading(true)
-        try {
-          const posts = await fetchAllBlogPosts()
-          setBlogPosts(posts.length > 0 ? posts : fallbackBlogPosts)
-        } catch (error) {
-          console.error("Error loading blog posts:", error)
-          // Use fallback posts if WordPress is unavailable
-          setBlogPosts(fallbackBlogPosts)
-        } finally {
-          setIsLoading(false)
+      setIsLoading(true)
+      try {
+        // Always fetch fresh data from WordPress (bypasses any caching)
+        const posts = await fetchAllBlogPosts()
+        console.log("Fetched posts from WordPress:", posts.length)
+        if (posts.length > 0) {
+          setBlogPosts(posts)
+        } else {
+          // If WordPress returns empty, check if we have server-side posts
+          // This handles the case where WordPress might be temporarily unavailable
+          if (initialPosts.length > 0) {
+            console.log("Using server-side posts as fallback")
+            setBlogPosts(initialPosts)
+          } else {
+            console.log("Using hardcoded fallback posts")
+            setBlogPosts(fallbackBlogPosts)
+          }
         }
-      } else {
-        setBlogPosts(initialPosts)
+      } catch (error) {
+        console.error("Error loading blog posts:", error)
+        // On error, try to use initial posts or fallback
+        if (initialPosts.length > 0) {
+          setBlogPosts(initialPosts)
+        } else {
+          setBlogPosts(fallbackBlogPosts)
+        }
+      } finally {
+        setIsLoading(false)
       }
     }
 
+    // Always fetch on mount to get latest data
     loadPosts()
-  }, [initialPosts])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty dependency array - only run on mount
+
+  // Function to manually refresh posts
+  const refreshPosts = async () => {
+    setIsLoading(true)
+    try {
+      const posts = await fetchAllBlogPosts()
+      if (posts.length > 0) {
+        setBlogPosts(posts)
+      } else {
+        setBlogPosts(fallbackBlogPosts)
+      }
+    } catch (error) {
+      console.error("Error refreshing blog posts:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
     const pageFromUrl = searchParams.get("page")
@@ -354,7 +387,20 @@ export default function MediaPageClient({ initialPosts = [] }: MediaPageClientPr
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-gray-900 mb-4">Media & Insights</h1>
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <h1 className="text-gray-900">Media & Insights</h1>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={refreshPosts}
+                disabled={isLoading}
+                className="flex items-center gap-2"
+                title="Refresh blog posts"
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Refresh</span>
+              </Button>
+            </div>
             <p className="text-gray-600">
               Explore our latest articles, research, and perspectives on the world of AI talent and technology hiring.
             </p>

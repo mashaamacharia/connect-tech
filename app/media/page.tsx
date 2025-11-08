@@ -51,8 +51,13 @@ export const metadata: Metadata = {
   },
 }
 
+// Force dynamic rendering and disable caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function MediaPage() {
   // Fetch blog posts from WordPress on the server
+  // This will fetch fresh data on every request (no caching)
   let initialPosts: BlogPost[] = []
   
   try {

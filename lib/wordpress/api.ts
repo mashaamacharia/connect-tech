@@ -11,9 +11,14 @@ import type { WordPressPost, BlogPost, WordPressPostsResponse } from "./types";
 export async function fetchAllBlogPosts(): Promise<BlogPost[]> {
   try {
     const client = getApolloClient();
+    
+    // Clear cache before fetching to ensure fresh data
+    client.cache.reset();
+    
     const { data } = await client.query<WordPressPostsResponse>({
       query: GET_ALL_POSTS,
-      fetchPolicy: "network-only",
+      fetchPolicy: "no-cache", // Changed to no-cache for always fresh data
+      errorPolicy: "all",
     });
 
     if (!data?.posts?.edges) {
@@ -43,10 +48,15 @@ export async function fetchBlogPosts(
 }> {
   try {
     const client = getApolloClient();
+    
+    // Clear cache before fetching
+    client.cache.reset();
+    
     const { data } = await client.query<WordPressPostsResponse>({
       query: GET_POSTS,
       variables: { first, after },
-      fetchPolicy: "network-only",
+      fetchPolicy: "no-cache",
+      errorPolicy: "all",
     });
 
     if (!data?.posts?.edges) {
@@ -82,10 +92,15 @@ export async function fetchBlogPosts(
 export async function fetchBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   try {
     const client = getApolloClient();
+    
+    // Clear cache before fetching
+    client.cache.reset();
+    
     const { data } = await client.query<{ postBy: WordPressPost | null }>({
       query: GET_POST_BY_SLUG,
       variables: { slug },
-      fetchPolicy: "network-only",
+      fetchPolicy: "no-cache",
+      errorPolicy: "all",
     });
 
     if (!data?.postBy) {
