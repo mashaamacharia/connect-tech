@@ -70,5 +70,6 @@ export interface BlogPost {
   author: string;
   date: string;
   slug: string;
+  content?: string; // Full HTML content from WordPress
 }
 

@@ -84,6 +84,7 @@ export function transformWordPressPostToBlogPost(post: WordPressPost): BlogPost 
     author,
     date,
     slug,
+    content: post.content, // Include full content if available
   };
 }
 
