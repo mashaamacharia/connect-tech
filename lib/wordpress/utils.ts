@@ -43,12 +43,10 @@ export function extractExcerpt(excerpt: string, maxLength: number = 200): string
 /**
  * Get featured image URL or fallback
  */
-export function getFeaturedImageUrl(
-  featuredImage: WordPressPost["featuredImage"],
-  fallback: string = "/placeholder.svg"
-): string {
-  if (featuredImage?.node?.sourceUrl) {
-    return featuredImage.node.sourceUrl;
+export function getFeaturedImageUrl(post: WordPressPost, fallback: string = "/placeholder.svg"): string {
+  const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0];
+  if (featuredMedia?.source_url) {
+    return featuredMedia.source_url;
   }
   return fallback;
 }
@@ -57,34 +55,23 @@ export function getFeaturedImageUrl(
  * Transform WordPress post to BlogPost format
  */
 export function transformWordPressPostToBlogPost(post: WordPressPost): BlogPost {
-  // Extract slug from the post
   const slug = post.slug;
-  
-  // Create link path (assuming /media/[slug] structure)
   const link = `/media/${slug}`;
-  
-  // Get featured image or use a default based on slug
-  const image = getFeaturedImageUrl(post.featuredImage, `/media/${slug}.png`);
-  
-  // Get author name
-  const author = post.author?.node?.name || "Kannan Kaliyur";
-  
-  // Format date
+  const image = getFeaturedImageUrl(post, `/media/${slug}.png`);
+  const author = post._embedded?.author?.[0]?.name || "Connect Tech+Talent";
   const date = formatWordPressDate(post.date);
-  
-  // Extract and clean excerpt
-  const excerpt = extractExcerpt(post.excerpt || "");
-  
+  const excerpt = extractExcerpt(post.excerpt?.rendered || "");
+
   return {
-    id: post.id,
-    title: post.title || "Untitled",
+    id: post.id.toString(),
+    title: post.title?.rendered || "Untitled",
     excerpt,
     link,
     image,
     author,
     date,
     slug,
-    content: post.content, // Include full content if available
+    content: post.content?.rendered,
   };
 }
 

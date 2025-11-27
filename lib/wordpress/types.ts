@@ -1,64 +1,40 @@
 // lib/wordpress/types.ts
 
-export interface WordPressAuthor {
-  node: {
-    name: string;
-  };
+export interface WordPressRenderedString {
+  rendered: string;
 }
 
-export interface WordPressImage {
-  node: {
-    sourceUrl: string;
-    altText: string;
-    mediaDetails?: {
-      width: number;
-      height: number;
-    };
-  } | null;
+export interface WordPressFeaturedMedia {
+  source_url?: string;
+  alt_text?: string;
 }
 
-export interface WordPressCategory {
-  nodes: Array<{
-    name: string;
-    slug: string;
+export interface WordPressEmbedded {
+  author?: Array<{
+    name?: string;
+    slug?: string;
+    url?: string;
   }>;
-}
-
-export interface WordPressTag {
-  nodes: Array<{
-    name: string;
-    slug: string;
-  }>;
+  "wp:featuredmedia"?: WordPressFeaturedMedia[];
 }
 
 export interface WordPressPost {
-  id: string;
-  title: string;
-  excerpt: string;
+  id: number;
+  title: WordPressRenderedString;
+  excerpt: WordPressRenderedString;
+  content: WordPressRenderedString;
   slug: string;
   date: string;
   modified: string;
-  author: WordPressAuthor;
-  featuredImage: WordPressImage;
-  categories: WordPressCategory;
-  tags: WordPressTag;
-  content?: string;
+  link: string;
+  author: number;
+  featured_media: number;
+  _embedded?: WordPressEmbedded;
 }
 
-export interface WordPressPostEdge {
-  node: WordPressPost;
-}
-
-export interface WordPressPostsResponse {
-  posts: {
-    pageInfo?: {
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor: string;
-      endCursor: string;
-    };
-    edges: WordPressPostEdge[];
-  };
+export interface WordPressPostsResponseMeta {
+  total: number;
+  totalPages: number;
 }
 
 export interface BlogPost {
