@@ -1,12 +1,11 @@
 // lib/wordpress/api.ts
-import "server-only";
 import { transformWordPressPosts, transformWordPressPostToBlogPost } from "./utils";
 import type { WordPressPost, BlogPost, WordPressPostsResponseMeta } from "./types";
 
 const DEFAULT_REST_BASE =
   process.env.NEXT_PUBLIC_WORDPRESS_REST_URL ||
   process.env.WORDPRESS_REST_URL ||
-  "https://connecttech.com/wp-json/wp/v2";
+  "https://www.connecttechtalent.com/wp-json/wp/v2";
 
 const POSTS_ENDPOINT = `${DEFAULT_REST_BASE.replace(/\/$/, "")}/posts`;
 
