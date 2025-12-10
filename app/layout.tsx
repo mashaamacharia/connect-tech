@@ -79,8 +79,8 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32x32.jpg", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.jpg", sizes: "any" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     other: [{ rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#1b99a7" }],
@@ -106,6 +106,7 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <head>
         <meta name="google-site-verification" content="_KlDYn0gBvg8DgIh0rL1d7HjL12qNYhq-ToJMIxAGao" />  
+
       </head>
       <body className={`${montserrat.className} flex flex-col min-h-screen bg-white text-gray-800`}>
         <ScrollToTop />
