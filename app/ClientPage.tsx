@@ -230,7 +230,7 @@ export default function ClientPage() {
                 <div>
                   <div className="flex items-center gap-3">
                     <Linkedin className="h-6 w-6 text-primary" />
-                    <span className="text-3xl font-bold text-primary">130k</span>
+                    <span className="text-3xl font-bold text-primary">175k</span>
                   </div>
                   <p className="mt-2 ml-9 text-gray-500">Community on LinkedIn</p>
                 </div>
@@ -249,7 +249,7 @@ export default function ClientPage() {
                 <li className="flex items-start">
                   <ChevronRight className="h-4 w-4 text-primary mr-2 mt-1 flex-shrink-0" />
                   <span>
-                    Access a proprietary database of <strong>200,000+ qualified candidates.</strong>
+                    Access a proprietary database of <strong>250K+ qualified candidates.</strong>
                   </span>
                 </li>
                 <li className="flex items-start">
