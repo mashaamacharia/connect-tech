@@ -236,6 +236,7 @@ export default function ClientPage() {
                 </div>
               </div>
             </Card>
+            
 
             {/* Pre-screened Talent Card */}
             <Card className="border-gray-200 shadow-sm p-8">
