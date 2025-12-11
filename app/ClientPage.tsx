@@ -249,7 +249,7 @@ export default function ClientPage() {
                 <li className="flex items-start">
                   <ChevronRight className="h-4 w-4 text-primary mr-2 mt-1 flex-shrink-0" />
                   <span>
-                    Access a proprietary database of <strong>250K+ qualified candidates.</strong>
+                    Access a proprietary database of <strong>250,000+ qualified candidates.</strong>
                   </span>
                 </li>
                 <li className="flex items-start">
