@@ -70,7 +70,7 @@ const processSteps = [
     step: 2,
     title: "Talent Sourcing & Vetting",
     description:
-      "Leveraging our network of 200,000+ professionals, we identify candidates with the right skills and experience. Our rigorous, multi-stage vetting process assesses technical proficiency, problem-solving abilities, and enterprise readiness.",
+      "Leveraging our network of 250K+ professionals, we identify candidates with the right skills and experience. Our rigorous, multi-stage vetting process assesses technical proficiency, problem-solving abilities, and enterprise readiness.",
     icon: UserCheck,
     details: [
       "Proprietary database and targeted network sourcing.",

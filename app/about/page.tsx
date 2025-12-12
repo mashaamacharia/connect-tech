@@ -126,7 +126,7 @@ const timelineData = [
     year: "2025",
     title: "Connect Tech+Talent Is Thriving",
     description:
-      "In the past 29+ years, our database of candidates has continued to grow, helping us provide our clients with more than 200k highly qualified candidates in 30+ professions and 6 major industries.",
+      "In the past 29+ years, our database of candidates has continued to grow, helping us provide our clients with more than 250K+ highly qualified candidates in 30+ professions and 6 major industries.",
   },
 ]
 

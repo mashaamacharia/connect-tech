@@ -283,7 +283,7 @@ export default function NearshoreOutsourcingClientPage() {
 
             <p className="mb-6">
               Connect Tech+Talent is repeatedly chosen by companies for our proven capability to rapidly and
-              proficiently screen and select the appropriate resources. Our internal database of over 200,000
+              proficiently screen and select the appropriate resources. Our internal database of over 250K+
               pre-screened candidates is constantly refreshed with qualified individuals in necessary fields such as
               mobile technology, cloud systems, cyber security and data science.
             </p>

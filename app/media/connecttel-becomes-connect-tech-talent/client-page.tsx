@@ -83,7 +83,7 @@ export default function ConnectTelClientPage() {
             </p>
 
             <p className="mb-8">
-              Today with 20+ years of tech hiring track record coupled with 200k+ of internal candidate database,
+              Today with 20+ years of tech hiring track record coupled with 250K+ of internal candidate database,
               Connect Tech & Talent is geared to handle the upcoming market challenges and help the clients build high
               performing teams.
             </p>

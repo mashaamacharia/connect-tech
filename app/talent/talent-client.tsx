@@ -155,7 +155,7 @@ const talentCategories = [
 
 const stats = [
   { value: "250K+", label: "AI Professionals in Network" },
-  { value: "145K+", label: "LinkedIn Followers" },
+  { value: "175K+", label: "LinkedIn Followers" },
   { value: "50+", label: "Specialized AI Roles" },
   { value: "15+", label: "Industry Verticals" },
   { value: "95%", label: "Placement Success Rate" },

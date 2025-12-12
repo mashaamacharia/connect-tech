@@ -246,7 +246,7 @@ export default function ContactPage() {
                 <CardContent className="p-6 space-y-4">
                   <h4 className="text-lg font-semibold text-gray-900">For AI Professionals</h4>
                   <p className="text-sm text-gray-600">
-                    Are you an AI specialist looking for your next opportunity? Join our network of 200,000+ technology
+                    Are you an AI specialist looking for your next opportunity? Join our network of 250K+ technology
                     professionals.
                   </p>
                   <Button

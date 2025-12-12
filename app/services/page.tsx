@@ -147,7 +147,7 @@ const stats = [
   { value: "95%", label: "Client Satisfaction Rate" },
   { value: "2 weeks", label: "Average Time to Placement" },
   { value: "250K+", label: "AI Professionals in Network" },
-  { value: "145K+", label: "LinkedIn Followers" },
+  { value: "175K+", label: "LinkedIn Followers" },
   { value: "150+", label: "Enterprise Clients Served" },
 ]
 

@@ -230,7 +230,7 @@ export default function ClientPage() {
                 <div>
                   <div className="flex items-center gap-3">
                     <Linkedin className="h-6 w-6 text-primary" />
-                    <span className="text-3xl font-bold text-primary">175k</span>
+                    <span className="text-3xl font-bold text-primary">175k+</span>
                   </div>
                   <p className="mt-2 ml-9 text-gray-500">Community on LinkedIn</p>
                 </div>
