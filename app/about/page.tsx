@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Users, Target, Handshake } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import TeamSectionClient from "@/components/team-section-client"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -57,20 +58,61 @@ const teamMembers = [
     title: "CEO",
     image: "/kannan-kaliyur.png",
     bioLink: "#",
+    bio: `
+### Chief Executive Officer
+
+**Education**
+- M.S. in Electrical Engineering  
+- MBA, University of Texas at Austin  
+
+**Experience**
+- 34+ years in technology and leadership  
+
+Kannan Kaliyur is the **Chief Executive Officer of Connect Tech+Talent** and a hands-on leader who has successfully guided the company’s growth since 1996.
+
+With a strong foundation in both **engineering and business**, Kannan combines technical depth with strategic insight to address the complex technical and business needs of customers. This balanced approach enables Connect Tech+Talent to consistently deliver **maximum value** to enterprise clients.
+    `,
   },
   {
     name: "Rosimildo da Silva",
     title: "CTO",
     image: "/rosimildo-da-silva.png",
     bioLink: "#",
+    bio: `
+### Chief Technology Officer
+
+**Education**
+- M.S. in Computer Science  
+
+**Experience**
+- 37+ years in software engineering and architecture  
+
+Rosimildo da Silva is the **Chief Technology Officer of Connect Tech+Talent** and a former professor in Brazil with deep expertise in solving highly complex technical challenges.
+
+He is widely recognized for designing and implementing solutions across **.NET, web services, network communication protocols, firmware, and embedded systems**. As a chief software architect on multiple global initiatives, Rosimildo has delivered **creative, low-cost solutions** for software-intensive problems for Fortune 500 customers worldwide.
+    `,
   },
   {
     name: "Vikram Bhavsar",
     title: "VP of Engineering",
     image: "/vikram-bhavsar.png",
     bioLink: "#",
+    bio: `
+### Vice President of Product Development
+
+**Education**
+- B.S. in Electrical Engineering, University of Texas at Austin  
+
+**Experience**
+- 30+ years in engineering and product development  
+
+Vikram Bhavsar brings **vision, tenacity, and analytical leadership** to Connect Tech+Talent as VP of Product Development.
+
+With a strong engineering foundation and a “never-quit” mindset, Vikram has led teams through some of the most complex technical challenges. His background in **network communication, embedded systems, and object-oriented applications** enables him to provide both the leadership and hands-on technical support required to drive successful customer outcomes.
+    `,
   },
 ]
+
 
 const values = [
   {
@@ -155,38 +197,9 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center mb-10">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">The Team Behind the Tech and Talent</h2>
-            <p className="text-gray-600">
-              Our leadership team combines decades of experience in technology, talent acquisition, and enterprise
-              strategy to guide our mission.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {teamMembers.map((member) => (
-              <Card key={member.name} className="border-gray-200 text-center">
-                <CardContent className="p-6">
-                  <Image
-                    src={member.image || "/placeholder.svg"}
-                    alt={`Portrait of ${member.name}`}
-                    width={120}
-                    height={120}
-                    className="rounded-full mx-auto mb-4"
-                  />
-                  <h3 className="text-lg font-medium text-gray-900">{member.name}</h3>
-                  <p className="text-sm text-gray-500 mb-4">{member.title}</p>
-                  <Button variant="link" asChild className="text-sm p-0 h-auto">
-                    <Link href={member.bioLink}>Read Bio</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Team Section (client-side with bio sheet) */}
+      <TeamSectionClient teamMembers={teamMembers} />
+
 
       {/* Our Story Timeline Section */}
       <section className="py-12 bg-gray-50">
@@ -305,8 +318,15 @@ export default function AboutPage() {
                 </Link>
               </Button>
               <Button variant="outline" className="border-gray-300 bg-transparent" asChild>
-                <Link href="/careers">Explore Careers</Link>
+                <Link
+                  href="https://evoportalus.tracker-rms.com/Opportunity/Lite/?db=ConnectTechTalent"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Explore Careers
+                </Link>
               </Button>
+
             </div>
           </div>
         </div>
