@@ -70,7 +70,7 @@ export function Footer() {
               <Link href="/process" className="block hover:text-gray-900 transition-colors">
                 Our Process
               </Link>
-              <Link href="/careers" className="block hover:text-gray-900 transition-colors">
+              <Link href="https://evoportalus.tracker-rms.com/Opportunity/Lite/?db=ConnectTechTalent" target="_blank" rel="noopener noreferrer" className="block hover:text-gray-900 transition-colors">
                 Careers
               </Link>
               <Link href="/contact" className="block hover:text-gray-900 transition-colors">
