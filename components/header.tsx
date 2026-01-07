@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, X } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 
 const navLinks = [
   { href: "/services", label: "Services" },
@@ -20,9 +20,41 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 })
+  const navRef = useRef<HTMLDivElement>(null)
+  const linkRefs = useRef<{ [key: string]: HTMLAnchorElement | null }>({})
+
+  useEffect(() => {
+    const updateIndicator = () => {
+      const activeLink = navLinks.find(
+        (link) => pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/")
+      )
+
+      if (activeLink && linkRefs.current[activeLink.href] && navRef.current) {
+        const linkElement = linkRefs.current[activeLink.href]
+        const navElement = navRef.current
+        
+        if (linkElement) {
+          const linkRect = linkElement.getBoundingClientRect()
+          const navRect = navElement.getBoundingClientRect()
+          
+          setIndicatorStyle({
+            left: linkRect.left - navRect.left,
+            width: linkRect.width,
+            opacity: 1,
+          })
+        }
+      } else {
+        setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }))
+      }
+    }
+
+    updateIndicator()
+    window.addEventListener("resize", updateIndicator)
+    return () => window.removeEventListener("resize", updateIndicator)
+  }, [pathname])
 
   const handleLinkClick = () => {
-    // Close mobile menu and scroll to top will be handled by ScrollToTop component
     setIsMobileMenuOpen(false)
   }
 
@@ -40,21 +72,36 @@ export function Header() {
               priority
             />
           </Link>
-          <nav className="hidden items-center space-x-8 md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={handleLinkClick}
-                className={`text-sm font-medium transition-colors hover:text-gray-900 ${
-                  pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/")
-                    ? "text-gray-900"
-                    : "text-gray-600"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <nav className="hidden items-center space-x-8 md:flex relative" ref={navRef}>
+            {/* Animated indicator */}
+            <div
+              className="absolute bottom-0 h-0.5 bg-blue-600 transition-all duration-300 ease-out"
+              style={{
+                left: `${indicatorStyle.left}px`,
+                width: `${indicatorStyle.width}px`,
+                opacity: indicatorStyle.opacity,
+              }}
+            />
+            
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/")
+              
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  ref={(el) => {
+                    linkRefs.current[link.href] = el
+                  }}
+                  onClick={handleLinkClick}
+                  className={`text-sm font-medium transition-colors hover:text-gray-900 pb-1 ${
+                    isActive ? "text-gray-900" : "text-gray-600"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              )
+            })}
             <Button
               variant="outline"
               className="text-sm font-medium border-gray-300 text-gray-700 hover:bg-gray-50 bg-transparent"
@@ -92,20 +139,27 @@ export function Header() {
                   </SheetTrigger>
                 </div>
                 <nav className="flex flex-col space-y-4">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={handleLinkClick}
-                      className={`block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 ${
-                        pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/")
-                          ? "bg-gray-100 text-gray-900"
-                          : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {navLinks.map((link) => {
+                    const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/")
+                    
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={handleLinkClick}
+                        className={`block rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-gray-100 relative ${
+                          isActive
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        {isActive && (
+                          <span className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full" />
+                        )}
+                        {link.label}
+                      </Link>
+                    )
+                  })}
                   <Button
                     variant="outline"
                     className="w-full text-base font-medium border-gray-300 text-gray-700 hover:bg-gray-50 bg-transparent"
@@ -123,4 +177,4 @@ export function Header() {
       </div>
     </header>
   )
-}
+} 

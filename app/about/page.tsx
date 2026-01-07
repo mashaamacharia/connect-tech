@@ -57,6 +57,7 @@ const teamMembers = [
     name: "Kannan Kaliyur",
     title: "CEO",
     image: "/kannan-kaliyur.png",
+    linkedinUrl: "https://www.linkedin.com/in/kannankaliyur/",
     bioLink: "#",
     bio: `
 ### Chief Executive Officer
@@ -77,6 +78,7 @@ With a strong foundation in both **engineering and business**, Kannan combines t
     name: "Rosimildo da Silva",
     title: "CTO",
     image: "/rosimildo-da-silva.png",
+    linkedinUrl: "https://www.linkedin.com/in/rosimildo-da-silva-158b899/",
     bioLink: "#",
     bio: `
 ### Chief Technology Officer
@@ -96,6 +98,7 @@ He is widely recognized for designing and implementing solutions across **.NET, 
     name: "Vikram Bhavsar",
     title: "VP of Engineering",
     image: "/vikram-bhavsar.png",
+    linkedinUrl: "https://www.linkedin.com/in/vikram-bhavsar-1b41038/",
     bioLink: "#",
     bio: `
 ### Vice President of Product Development

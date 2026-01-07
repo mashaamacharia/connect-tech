@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sheet"
 import ReactMarkdown from "react-markdown"
 import rehypeSanitize from "rehype-sanitize"
-import { X } from "lucide-react"
+import { X, Linkedin } from "lucide-react"
 
 type TeamMember = {
   name: string
@@ -18,6 +18,7 @@ type TeamMember = {
   image?: string
   bio?: string
   bioLink?: string
+  linkedinUrl?: string
 }
 
 export default function TeamSectionClient({ teamMembers }: { teamMembers: TeamMember[] }) {
@@ -55,14 +56,41 @@ export default function TeamSectionClient({ teamMembers }: { teamMembers: TeamMe
                 />
                 <h3 className="text-lg font-medium text-gray-900">{member.name}</h3>
                 <p className="text-sm text-gray-500 mb-4">{member.title}</p>
-                <div className="flex justify-center gap-3">
+                <div className="flex justify-center items-center gap-3">
                   <Button
                     onClick={() => openSheet(member)}
-                    className="text-sm p-0 h-auto"
+                    className="text-sm p-0 h-auto hover:underline"
                     variant="link"
                   >
                     Read Bio
                   </Button>
+                  {member.linkedinUrl && (
+                    <>
+                      <span className="text-gray-300">|</span>
+                      <a
+                        href={member.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-md transition-all duration-200"
+                        style={{
+                          color: '#0A66C2',
+                          backgroundColor: 'transparent',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#0A66C2'
+                          e.currentTarget.style.color = '#FFFFFF'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent'
+                          e.currentTarget.style.color = '#0A66C2'
+                        }}
+                        aria-label={`Visit ${member.name}'s LinkedIn profile`}
+                      >
+                        <Linkedin className="h-4 w-4" />
+                        <span>LinkedIn</span>
+                      </a>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
