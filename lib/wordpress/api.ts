@@ -31,7 +31,7 @@ async function fetchWordPressPosts(options: FetchPostsOptions = {}): Promise<{
   }
 
   const response = await fetch(url.toString(), {
-    cache: "no-store",
+    next: { revalidate: 60 },
     headers: {
       Accept: "application/json",
     },

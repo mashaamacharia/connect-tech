@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
 import MediaPageClient from "@/components/mediaPage.tsx"
-import { fetchAllBlogPosts } from "@/lib/wordpress/api"
+import { fetchBlogPosts } from "@/lib/wordpress/api"
 import type { BlogPost } from "@/lib/wordpress/types"
 
 export const metadata: Metadata = {
@@ -52,25 +52,24 @@ export const metadata: Metadata = {
 }
 
 // Force dynamic rendering and disable caching
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Remove force-dynamic to allow ISR
+export const revalidate = 60;
 
-export default async function MediaPage() {
-  // Fetch blog posts from WordPress on the server
-  // This will fetch fresh data on every request (no caching)
-  let initialPosts: BlogPost[] = []
-  
-  try {
-    initialPosts = await fetchAllBlogPosts()
-  } catch (error) {
-    console.error("Error fetching blog posts:", error)
-    // If WordPress is unavailable, initialPosts will be empty array
-    // The component will handle this gracefully
-  }
+export default async function MediaPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  const page = typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
+  const { posts, totalPages } = await fetchBlogPosts(page, 6);
 
   return (
     <Suspense fallback={<div className="container mx-auto px-4 py-8">Loading...</div>}>
-      <MediaPageClient initialPosts={initialPosts} />
+      <MediaPageClient
+        initialPosts={posts}
+        totalPages={totalPages}
+        currentPage={page}
+      />
     </Suspense>
   )
 }

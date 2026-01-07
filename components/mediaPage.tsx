@@ -7,100 +7,44 @@ import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import { fetchAllBlogPosts } from "@/lib/wordpress/api"
 import type { BlogPost } from "@/lib/wordpress/types"
 
 const POSTS_PER_PAGE = 6
 
 interface MediaPageClientProps {
-  initialPosts?: BlogPost[]
+  initialPosts: BlogPost[]
+  totalPages: number
+  currentPage: number
 }
 
-export default function MediaPageClient({ initialPosts = [] }: MediaPageClientProps) {
-  const searchParams = useSearchParams()
+export default function MediaPageClient({
+  initialPosts,
+  totalPages,
+  currentPage
+}: MediaPageClientProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  const pageFromUrl = searchParams.get("page")
-  const [currentPage, setCurrentPage] = useState(pageFromUrl ? Number.parseInt(pageFromUrl) : 1)
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(initialPosts)
   const [isLoading, setIsLoading] = useState(false)
 
-  // Always fetch fresh data on component mount
+  // Sync loading state with navigation
   useEffect(() => {
-    const loadPosts = async () => {
-      setIsLoading(true)
-      try {
-        // Always fetch fresh data from WordPress (bypasses any caching)
-        const posts = await fetchAllBlogPosts()
-        console.log("Fetched posts from WordPress:", posts.length)
-        if (posts.length > 0) {
-          // Always use WordPress data when available
-          setBlogPosts(posts)
-        } else if (initialPosts.length > 0) {
-          // If WordPress returns empty but we have server-side posts, use them
-          console.log("Using server-side posts as fallback")
-          setBlogPosts(initialPosts)
-        } else {
-          // No posts available
-          console.log("No blog posts available from WordPress")
-          setBlogPosts([])
-        }
-      } catch (error) {
-        console.error("Error loading blog posts:", error)
-        // On error, try to use initial posts
-        if (initialPosts.length > 0) {
-          setBlogPosts(initialPosts)
-        } else {
-          setBlogPosts([])
-        }
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    // Always fetch on mount to get latest data
-    loadPosts()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Empty dependency array - only run on mount
-
-  // Function to manually refresh posts
-  const refreshPosts = async () => {
-    setIsLoading(true)
-    try {
-      const posts = await fetchAllBlogPosts()
-      if (posts.length > 0) {
-        setBlogPosts(posts)
-      } else {
-        setBlogPosts([])
-      }
-    } catch (error) {
-      console.error("Error refreshing blog posts:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    const pageFromUrl = searchParams.get("page")
-    const pageNumber = pageFromUrl ? Number.parseInt(pageFromUrl) : 1
-    if (pageNumber !== currentPage) {
-      setCurrentPage(pageNumber)
-    }
-  }, [searchParams, currentPage])
-
-  const totalPages = Math.ceil(blogPosts.length / POSTS_PER_PAGE)
-  const startIndex = (currentPage - 1) * POSTS_PER_PAGE
-  const endIndex = startIndex + POSTS_PER_PAGE
-  const currentPosts = blogPosts.slice(startIndex, endIndex)
+    setIsLoading(false)
+  }, [initialPosts])
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+    setIsLoading(true)
     const params = new URLSearchParams(searchParams.toString())
     params.set("page", page.toString())
     router.push(`${pathname}?${params.toString()}`)
     // Scroll to top when page changes
     window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  const handleRefresh = () => {
+    setIsLoading(true)
+    router.refresh()
   }
 
   return (
@@ -114,7 +58,7 @@ export default function MediaPageClient({ initialPosts = [] }: MediaPageClientPr
               <Button
                 variant="outline"
                 size="sm"
-                onClick={refreshPosts}
+                onClick={handleRefresh}
                 disabled={isLoading}
                 className="flex items-center gap-2"
                 title="Refresh blog posts"
@@ -137,13 +81,13 @@ export default function MediaPageClient({ initialPosts = [] }: MediaPageClientPr
             <div className="text-center py-12">
               <p className="text-gray-600">Loading blog posts...</p>
             </div>
-          ) : blogPosts.length === 0 ? (
+          ) : initialPosts.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600">No blog posts available at the moment.</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {currentPosts.map((post) => (
+              {initialPosts.map((post) => (
                 <Link key={post.id || post.slug || post.title} href={`${post.link}?page=${currentPage}`} className="block">
                   <Card className="border border-gray-200 flex flex-col overflow-hidden h-full cursor-pointer hover:shadow-lg transition-shadow duration-200">
                     <div className="relative w-full aspect-video bg-gray-100">
